@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Memorize_words.dateSettingsPage"
+             Padding="0,40,0,0"             
+             Shell.NavBarIsVisible="True" 
+             NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ================= 顶部栏 ================= -->
+        <Grid BackgroundColor="White"
+              Padding="0,0"
+              ColumnDefinitions="Auto,*,Auto"
+              HeightRequest="60">
+
+            <!-- 左：标题 -->
+            <Button Text="⚙"
+                   VerticalOptions="Center"
+                    BackgroundColor="Transparent"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="Black"/>
+
+            <!-- 中：日期选择 -->
+            <Label Text="选择目标日期"
+                        Grid.Column="1"
+                        HorizontalOptions="Center"
+                   FontSize="20"
+                        VerticalOptions="Center"/>
+
+            <!-- 右：返回按钮 -->
+            <Button Text="⌂"
+                    Grid.Column="2"
+                    Clicked="OnBackClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="Blue"
+                    FontSize="24"
+                    VerticalOptions="Center"/>
+        </Grid>
+        <VerticalStackLayout Grid.Row="1" Padding="20" Spacing="20">
+
+            <!--<Label Text="选择目标日期" FontSize="18"/>-->
+
+            <DatePicker 
+            x:Name="TargetDatePicker"
+            Format="yyyy/MM/dd" 
+            HorizontalOptions="Center" />
+
+            <Button Text="保存"
+                Clicked="OnSaveClicked"
+                HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

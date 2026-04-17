@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Memorize_words.Controls"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+                ios:Page.UseSafeArea="False"
+             x:Class="Memorize_words.MainPage"
+             BackgroundColor="{DynamicResource PageBackgroundColor}"
+             Padding="0,40"             
+             Shell.NavBarIsVisible="False" 
+             NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ================= 顶部自定义导航栏 ================= -->
+        <Grid HeightRequest="60"
+              BackgroundColor="White"
+              Padding="0,0"
+              ColumnDefinitions="Auto,*,Auto">
+
+            <!-- 左按钮 -->
+            <Button Text="☰"
+                    Clicked="OnSettingsClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="Black"
+                    FontSize="24"
+                    HorizontalOptions="Start"
+                    FontAttributes="Bold"/>
+
+            <!-- 标题 -->
+            <Label Text="背单词排期"
+                   Grid.Column="1"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontSize="20"
+                   FontAttributes="Bold"/>
+
+            <!-- 右倒计时 -->
+            <Button x:Name="LblCountdown"
+                   Grid.Column="2"
+                   HorizontalOptions="End"
+                   VerticalOptions="Center"
+                    Clicked="OnTargetdateClicked"
+                    BackgroundColor="Transparent"
+                   FontSize="24"
+                   FontAttributes="Bold"/>
+        </Grid>
+
+        <!-- ================= 主体内容 ================= -->
+        <!-- ⭐ 修复：必须加上 Grid.Row="1"，否则它会和顶部的导航栏挤在同一行，导致安卓判定点击区域越界而屏蔽手势 -->
+        <Grid RowDefinitions="*, Auto" Grid.Row="1">
+            <VerticalStackLayout Padding="0" Spacing="15">
+
+                <controls:ThreeWeekCalendarView x:Name="calendar"/>
+
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="30">
+
+                    <Button x:Name="BtnWordType"
+
+                            Clicked="OnWordTypeToggleClicked"
+                            WidthRequest="100"
+                            HeightRequest="100"                   
+                            FontSize="24"
+                   />
+
+                    <Button x:Name="BtnWriteDelete"
+                            
+                            Clicked="BtnWriteDelete_Clicked"
+                            WidthRequest="100"
+                            HeightRequest="100"                   
+                            FontSize="24"
+                   FontAttributes="Bold"/>
+
+                </HorizontalStackLayout>
+
+                <controls:WheelPickerView HeightRequest="80"
+                                          x:Name="wheelPicker" />
+
+                <controls:DayDetailView x:Name="detailView"/>
+
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

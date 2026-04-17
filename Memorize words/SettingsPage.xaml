@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Memorize_words.SettingsPage"
+             Padding="0,40,0,0"             
+             Shell.NavBarIsVisible="False" 
+             NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ================= 顶部栏 ================= -->
+        <Grid BackgroundColor="White"
+              Padding="0,0"
+              ColumnDefinitions="Auto,*,Auto"
+              HeightRequest="60">
+            <!-- 左：返回按钮 -->
+            <Button Text="⌂"
+                    
+                    Clicked="OnBackClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="Blue"
+                    FontSize="24"
+                    VerticalOptions="Center"/>
+
+
+            <!-- 中：日期选择 -->
+            <Label Text="设置星期格式"
+                        Grid.Column="1"
+                        HorizontalOptions="Center"
+                   FontSize="20"
+                        VerticalOptions="Center"/>
+
+            <!-- 右：标题 -->
+            <Button Text="⚙"
+                   VerticalOptions="Center"
+                   BackgroundColor="Transparent"
+                   Grid.Column="2"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="Black"/>
+        </Grid>
+        <VerticalStackLayout Grid.Row="1" Padding="20" Spacing="20">
+
+        <!--<Label Text="选择目标日期" FontSize="18"/>-->
+
+            <Picker x:Name="WeekStartPicker">
+                <Picker.Items>
+                    <x:String>Monday</x:String>
+                    <x:String>Sunday</x:String>
+                </Picker.Items>
+            </Picker>
+
+        <Button Text="保存"
+                Clicked="OnSaveClicked"
+                HorizontalOptions="Center" />
+
+
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
