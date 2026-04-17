@@ -97,8 +97,8 @@ The system follows a spaced repetition model based on memory curves:
 - Marks must indicate **which attempt** failed  
 
 示例 Example：
-\[\,^{0\,1}_{2\,3} \, 並木　なみき　街道两旁的树\]
-\[\,^{0\,\,}_{\,\,3} \, 取り組み　とりくみ　致力于;主动处理\]
+$$\,^{0\,1}_{2\,3} \, 並木　なみき　街道两旁的树$$
+$$\,^{0\,\,}_{\,\,3} \, 取り組み　とりくみ　致力于;主动处理$$
 
 ### (4) 第四次仍失败的处理
 
@@ -158,7 +158,7 @@ The app assists the workflow but does not replace the learning process:
 - ②处可设置一目标日期，方便倒计时
 - ③处日历点击选择日期
 - ④处以及③中日期下方显示当前选择的日期的所有日程
-- 日程以\(页码^{次数}\)的形式显示。按记忆曲线理论，四次复习需要8天日程。因此页码范围为0~7,复习次数范围为0~3。如：在17日加入页码为0的日程\(0^0\)，则自动在18、20、24日也加入页码为0的日程\(0^1\)、\(0^2\)、\(0^3\).
+- 日程以$页码^{次数}$的形式显示。按记忆曲线理论，四次复习需要8天日程。因此页码范围为0\~7,复习次数范围为0\~3。如：在17日加入页码为0的日程$0^0$，则自动在18、20、24日也加入页码为0的日程$0^1$、$0^2$、$0^3$.
 - 自动选择当日、Ⅱ类词为默认
 - ⑤处点击切换Ⅰ/Ⅱ类词，切换词类会自动将⑦处轮盘设为切换后词类的前次输入页码的下一个页码
 - ⑥处点击切换输入日程/删除日程模式
@@ -169,7 +169,7 @@ The app assists the workflow but does not replace the learning process:
 - At ②, a target date can be set for convenient countdown.
 - At ③, a date can be selected by clicking on the calendar.
 - At ④ and below the date at ③, all schedules for the currently selected date are displayed.
-- Schedules are displayed in the form \(page^{repetition}\). According to spaced repetition theory, four reviews require an 8-day schedule. Therefore, the page number ranges from 0 to 7, and the repetition count ranges from 0 to 3. For example: when a schedule with page 0 is added on the 17th as \(0^0\), then schedules \(0^1\), \(0^2\), and \(0^3\) for page 0 are automatically added on the 18th, 20th, and 24th as well.
+- Schedules are displayed in the form $page^{repetition}$. According to spaced repetition theory, four reviews require an 8-day schedule. Therefore, the page number ranges from 0 to 7, and the repetition count ranges from 0 to 3. For example: when a schedule with page 0 is added on the 17th as $0^0$, then schedules $0^1$, $0^2$, and $0^3$ for page 0 are automatically added on the 18th, 20th, and 24th as well.
 - The current date and Type II words are selected by default.
 - At ⑤, clicking toggles between Type I and Type II words. Switching word types automatically sets the wheel at ⑦ to the next page number after the last input page number for the switched-to word type.
 - At ⑥, clicking toggles between add‑schedule mode and delete‑schedule mode.
