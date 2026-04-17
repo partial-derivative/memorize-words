@@ -99,11 +99,11 @@ The system follows a spaced repetition model based on memory curves:
 示例 Example：
 
 $$
-  ^{0 \; 1}_{2 \; 3} \quad  \text{並木　なみき　街道两旁的树}
+  ^{0 \kern0.3em 1}_{2 \kern0.3em 3} \quad  \text{並木　なみき　街道两旁的树}
 $$
 
 $$
- ^{0 \quad }_{\quad 3} \quad \text{取り組み　とりくみ　致力于;主动处理}
+ ^{0 \kern0.8em }_{\kern0.8em 3} \quad \text{取り組み　とりくみ　致力于;主动处理}
 $$
 
 ### (4) 第四次仍失败的处理
