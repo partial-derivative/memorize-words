@@ -15,7 +15,7 @@
         <Grid HeightRequest="60"
               BackgroundColor="Transparent"
               Padding="0,0"
-              ColumnDefinitions="Auto,*,Auto">
+              ColumnDefinitions="100,*,100">
 
             <!-- 左按钮 -->
             <Button Text="☰"
