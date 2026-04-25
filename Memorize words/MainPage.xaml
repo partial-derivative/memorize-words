@@ -3,17 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Memorize_words.Controls"
              xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-                ios:Page.UseSafeArea="False"
+                ios:Page.UseSafeArea="True"
              x:Class="Memorize_words.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}"
              Padding="0,40"             
-             Shell.NavBarIsVisible="False" 
+             Shell.NavBarIsVisible="True" 
              NavigationPage.HasNavigationBar="False">
     <Grid RowDefinitions="Auto,*">
 
         <!-- ================= 顶部自定义导航栏 ================= -->
         <Grid HeightRequest="60"
-              BackgroundColor="White"
+              BackgroundColor="Transparent"
               Padding="0,0"
               ColumnDefinitions="Auto,*,Auto">
 
@@ -21,7 +21,7 @@
             <Button Text="☰"
                     Clicked="OnSettingsClicked"
                     BackgroundColor="Transparent"
-                    TextColor="Black"
+                    TextColor="{AppThemeBinding Light=Black, Dark=White}"
                     FontSize="24"
                     HorizontalOptions="Start"
                     FontAttributes="Bold"/>
@@ -39,8 +39,8 @@
                    Grid.Column="2"
                    HorizontalOptions="End"
                    VerticalOptions="Center"
-                    Clicked="OnTargetdateClicked"
-                    BackgroundColor="Transparent"
+                   Clicked="OnTargetdateClicked"
+                   BackgroundColor="Transparent"
                    FontSize="24"
                    FontAttributes="Bold"/>
         </Grid>

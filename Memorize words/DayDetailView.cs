@@ -1,147 +1,150 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Memorize_words.Controls;
+using Microsoft.Maui.Controls;
 
 namespace Memorize_words.Controls
 {
-
     public class DayDetailView : ContentView
     {
         private HorizontalStackLayout _type1Layout;
         private HorizontalStackLayout _type2Layout;
+
+        // ⭐ 1. 保存对类型2(蓝色)文本元素的引用，以便主题切换时修改
+        private Span _type2IconSpan;
+        private Span _type2ColonSpan;
 
         public bool IsDeleteMode { get; set; }
 
         private ThreeWeekCalendarView? _calendar;
         private DateTime _currentDate;
         const int rowHeight = 34;
+
+        // ⭐ 2. 判断当前主题并输出对应的动态蓝色
+        private bool IsDarkMode => Application.Current?.RequestedTheme == AppTheme.Dark;
+        private Color DynamicBlue => IsDarkMode ? Colors.LightSkyBlue : Colors.Blue;
+
         public DayDetailView()
         {
             _type1Layout = new HorizontalStackLayout { Spacing = 6 };
             _type2Layout = new HorizontalStackLayout { Spacing = 6 };
 
+            // 提前实例化蓝色的 Span
+            _type2IconSpan = new Span
+            {
+                Text = " ⧅ ",
+                TextColor = DynamicBlue,
+                FontSize = 30,
+                FontAttributes = FontAttributes.None
+            };
+
+            _type2ColonSpan = new Span
+            {
+                Text = "：",
+                TextColor = DynamicBlue,
+                FontSize = 30,
+                FontAttributes = FontAttributes.None
+            };
+
             Content = new VerticalStackLayout
             {
                 Spacing = 8,
                 Children =
-        {
-            //// 第一行：Ⅰ + 布局 同排
-            //new HorizontalStackLayout
-            //{
-            //    Spacing = 8,HeightRequest = rowHeight,
-            //    Children =
-            //    {
-            //        new Label { Text = "□：", TextColor = Colors.Red, FontSize = 28 , FontAttributes=FontAttributes.Bold},
-            //        _type1Layout
-            //    }
-            //},
-            
-            //// 第二行：Ⅱ + 布局 同排
-            //new HorizontalStackLayout
-            //{
-            //    Spacing = 8,HeightRequest = rowHeight,
-            //    Children =
-            //    {
-            //        new Label { Text = "⧅：", TextColor = Colors.Blue, FontSize = 25, FontAttributes=FontAttributes.None},
-            //        _type2Layout
-            //    }
-            //}
-            new HorizontalStackLayout
-{
-    Spacing = 4,
-    HeightRequest = rowHeight,
-    Children =
-    {
-        new Label
-        {
-            WidthRequest = 60,
-            FormattedText = new FormattedString
-            {
-                Spans =
                 {
-                    new Span
+                    // 第一行：□ + 布局 同排 (永远保持红色)
+                    new HorizontalStackLayout
                     {
-                        Text = "□",
-                        TextColor = Colors.Red,
-                        FontSize = 30,           // ← 这里控制 □ 的大小（可调大到 34~38）
-                        FontAttributes = FontAttributes.Bold
+                        Spacing = 4,
+                        HeightRequest = rowHeight,
+                        Children =
+                        {
+                            new Label
+                            {
+                                WidthRequest = 60,
+                                FormattedText = new FormattedString
+                                {
+                                    Spans =
+                                    {
+                                        new Span
+                                        {
+                                            Text = "□",
+                                            TextColor = Colors.Red,
+                                            FontSize = 30,
+                                            FontAttributes = FontAttributes.Bold
+                                        },
+                                        new Span
+                                        {
+                                            Text = "：",
+                                            TextColor = Colors.Red,
+                                            FontSize = 30,
+                                            FontAttributes = FontAttributes.None
+                                        }
+                                    }
+                                },
+                                VerticalOptions = LayoutOptions.Center,
+                                VerticalTextAlignment = TextAlignment.Center
+                            },
+                            _type1Layout
+                        }
                     },
-                    new Span
-                    {
-                        Text = "：",
-                        TextColor = Colors.Red,
-                        FontSize = 30,           // “：”保持原来大小或稍小
-                        FontAttributes = FontAttributes.None
-                    }
-                }
-            },
-            VerticalOptions = LayoutOptions.Center,  // 垂直居中对齐
-            VerticalTextAlignment = TextAlignment.Center
-        },
-        _type1Layout
-    }
-},
 
-// 第二行：Ⅱ + 布局 同排
-new HorizontalStackLayout
-{
-    Spacing = 4,
-    HeightRequest = rowHeight,
-    Children =
-    {
-        new Label
-        {
-            WidthRequest = 60,
-            FormattedText = new FormattedString
-            {
-                Spans =
-                {
-                    new Span
+                    // 第二行：Ⅱ + 布局 同排
+                    new HorizontalStackLayout
                     {
-                        Text = " ⧅ ",
-                        TextColor = Colors.Blue,
-                        FontSize = 30,           // ⧅ 通常本身较大，可比 □ 小一点
-                        FontAttributes = FontAttributes.None
-                    },
-                    new Span
-                    {
-                        Text = "：",
-                        TextColor = Colors.Blue,
-                        FontSize = 30,
-                        FontAttributes = FontAttributes.None
+                        Spacing = 4,
+                        HeightRequest = rowHeight,
+                        Children =
+                        {
+                            new Label
+                            {
+                                WidthRequest = 60,
+                                FormattedText = new FormattedString
+                                {
+                                    // 放入刚刚单独实例化的动态颜色 Span
+                                    Spans = { _type2IconSpan, _type2ColonSpan }
+                                },
+                                VerticalOptions = LayoutOptions.Center
+                            },
+                            _type2Layout
+                        }
                     }
                 }
-            },
-            VerticalOptions = LayoutOptions.Center
-        },
-        _type2Layout
-    }
-}
-        }
             };
-        
-    }
+
+            // ⭐ 3. 订阅系统主题切换事件
+            if (Application.Current != null)
+            {
+                Application.Current.RequestedThemeChanged += OnThemeChanged;
+            }
+        }
+
+        // ⭐ 4. 主题切换时触发UI变色逻辑
+        private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _type2IconSpan.TextColor = DynamicBlue;
+                _type2ColonSpan.TextColor = DynamicBlue;
+
+                // 强制刷新内部的子块列表颜色
+                Refresh();
+            });
+        }
 
         // 绑定日历
         public void BindCalendar(ThreeWeekCalendarView calendar)
         {
             _calendar = calendar;
 
-            // ⭐ 1. 先同步当前日期（解决启动不显示）
             _currentDate = calendar.SelectedDate;
             Refresh();
 
-            // ⭐ 2. 监听日期变化
             calendar.DateSelected += date =>
             {
                 _currentDate = date;
                 Refresh();
             };
 
-            // ⭐ 3. 监听数据变化
             calendar.DataChanged += () =>
             {
                 Refresh();
@@ -162,10 +165,14 @@ new HorizontalStackLayout
             foreach (var item in list1)
                 _type1Layout.Children.Add(CreateCell(item, Colors.Red, "Ⅰ"));
 
+            // ⭐ 5. 这里将写死的 Colors.Blue 改为 DynamicBlue
             foreach (var item in list2)
-                _type2Layout.Children.Add(CreateCell(item, Colors.Blue, "Ⅱ"));
+                _type2Layout.Children.Add(CreateCell(item, DynamicBlue, "Ⅱ"));
         }
-
+        private Color DynamicBorderColor =>
+        Application.Current?.RequestedTheme == AppTheme.Dark
+            ? Colors.LightGray
+            : Colors.Gray;
         private View CreateCell(CalendarItem item, Color color, string state)
         {
             var frame = new Frame
@@ -173,7 +180,8 @@ new HorizontalStackLayout
                 Padding = new Thickness(6, 2),
                 CornerRadius = 6,
                 WidthRequest = 35,
-                BackgroundColor = Color.FromRgb(255, 255, 255),
+                BackgroundColor = Colors.Transparent,
+                BorderColor = DynamicBorderColor,
                 Content = new Label
                 {
                     Text = item.Value.ToString() + ToSuperscript(item.Index),

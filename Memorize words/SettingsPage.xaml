@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto,*">
 
         <!-- ================= 顶部栏 ================= -->
-        <Grid BackgroundColor="White"
+        <Grid BackgroundColor="Transparent"
               Padding="0,0"
               ColumnDefinitions="Auto,*,Auto"
               HeightRequest="60">
@@ -17,7 +17,7 @@
                     
                     Clicked="OnBackClicked"
                     BackgroundColor="Transparent"
-                    TextColor="Blue"
+                    TextColor="{AppThemeBinding Light=Blue, Dark=LightBlue}"
                     FontSize="24"
                     VerticalOptions="Center"/>
 
@@ -36,7 +36,7 @@
                    Grid.Column="2"
                    FontSize="24"
                    FontAttributes="Bold"
-                   TextColor="Black"/>
+                   TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
         </Grid>
         <VerticalStackLayout Grid.Row="1" Padding="20" Spacing="20">
 

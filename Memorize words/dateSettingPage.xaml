@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto,*">
 
         <!-- ================= 顶部栏 ================= -->
-        <Grid BackgroundColor="White"
+        <Grid BackgroundColor="Transparent"
               Padding="0,0"
               ColumnDefinitions="Auto,*,Auto"
               HeightRequest="60">
@@ -19,7 +19,7 @@
                     BackgroundColor="Transparent"
                    FontSize="24"
                    FontAttributes="Bold"
-                   TextColor="Black"/>
+                   TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
 
             <!-- 中：日期选择 -->
             <Label Text="选择目标日期"
@@ -33,7 +33,7 @@
                     Grid.Column="2"
                     Clicked="OnBackClicked"
                     BackgroundColor="Transparent"
-                    TextColor="Blue"
+                    TextColor="{AppThemeBinding Light=Blue, Dark=LightBlue}"
                     FontSize="24"
                     VerticalOptions="Center"/>
         </Grid>

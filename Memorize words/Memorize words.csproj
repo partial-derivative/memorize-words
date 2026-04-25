@@ -42,10 +42,12 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|ARM64'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -87,5 +89,47 @@
     
     <!-- 2. 可选：关闭完全裁剪，防止部分代码被过度优化掉导致找不到类 -->
     <PublishTrimmed>false</PublishTrimmed>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
+</PropertyGroup>
+<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|ARM64'">
+  <ApplicationDisplayVersion>1.1</ApplicationDisplayVersion>
 </PropertyGroup>
 </Project>

@@ -26,6 +26,7 @@ namespace Memorize_words.Controls
         private double _lastPanX;
         private int _centerIndex;
 
+
         private AbsoluteLayout _root;
 
         public int SelectedValue => _data[_centerIndex % _data.Count];
@@ -36,7 +37,7 @@ namespace Memorize_words.Controls
         {
             // ⭐ 核心黑科技：透明度为 1/255 的背景色。
             // 肉眼绝对看不见，但能强制 Android 和 iOS 生成触控拦截面，防止手势穿透掉。
-            this.BackgroundColor = Color.FromRgba(0, 0, 0, 0.01);
+            this.BackgroundColor = Color.FromRgba(255, 255, 255, 0.01);
             InitData();
             BuildUI();
             InitGesture();
@@ -209,13 +210,85 @@ namespace Memorize_words.Controls
             UpdateLayout();
         }
 
+        //private void ResetToCenter()
+        //{
+        //    _centerIndex = _data.Count / 2;
+        //    _offset = _centerIndex * ItemWidth;
+
+        //    SizeChanged += (_, __) =>
+        //    {
+        //        double center = Width / 2;
+        //        _offset = _centerIndex * ItemWidth - center + ItemWidth / 2;
+        //        UpdateLayout();
+        //    };
+        //}
+        private bool _initialized = false;
+
+        //private void ResetToCenter()
+        //{
+        //    _centerIndex = _data.Count / 2;
+
+        //    SizeChanged += async (_, __) =>
+        //    {
+        //        if (_initialized || Width <= 0)
+        //            return;
+
+        //        _initialized = true;
+
+        //        await Task.Yield(); // 等待本轮布局完全结束
+
+        //        double center = Width / 2;
+
+        //        _offset = _centerIndex * ItemWidth - center + ItemWidth / 2;
+
+        //        UpdateLayout();
+
+        //        SnapToNearest();   // ⭐ 强制最终吸附校正
+        //    };
+        //}
+
+
+        //public void ScrollToValue(int value)
+        //{
+        //    double center = Width / 2;
+
+        //    int bestIndex = -1;
+        //    double minDist = double.MaxValue;
+
+        //    for (int i = 0; i < _data.Count; i++)
+        //    {
+        //        if (_data[i] != value) continue;
+
+        //        double x = i * ItemWidth - _offset;
+        //        double itemCenter = x + ItemWidth / 2;
+
+        //        double dist = Math.Abs(itemCenter - center);
+
+        //        if (dist < minDist)
+        //        {
+        //            minDist = dist;
+        //            bestIndex = i;
+        //        }
+        //    }
+
+        //    if (bestIndex == -1) return;
+
+        //    _centerIndex = bestIndex;
+        //    _offset = bestIndex * ItemWidth - center + ItemWidth / 2;
+
+        //    UpdateLayout();
+        //}
         private void ResetToCenter()
         {
+            // 默认中心点落在数组的正中间，比如 800个元素的第 400 个（保证左右都有充足的数据可滚）
             _centerIndex = _data.Count / 2;
-            _offset = _centerIndex * ItemWidth;
 
-            SizeChanged += (_, __) =>
+            SizeChanged += (s, e) =>
             {
+                if (Width <= 0) return;
+
+                // ⭐ 修复1补全：抛弃 `_initialized` 单次锁定逻辑。
+                // 确保无论是初次加载、弹窗、还是设备翻转，只要尺寸就绪/变化，就立刻以当前的 _centerIndex 算好 Offset
                 double center = Width / 2;
                 _offset = _centerIndex * ItemWidth - center + ItemWidth / 2;
                 UpdateLayout();
@@ -224,33 +297,38 @@ namespace Memorize_words.Controls
 
         public void ScrollToValue(int value)
         {
-            double center = Width / 2;
-
             int bestIndex = -1;
-            double minDist = double.MaxValue;
+            int minIndexDiff = int.MaxValue;
 
+            // ⭐ 修复2：解决滚动到某些值时“左边是空白”的问题
+            // 以前依靠 _offset 去判断距离，如果 _offset 没初始化(为0)，就会抓取到最开头的 Index 0 (此时左边没有元素了)
+            // 修改后：只以当前的 _centerIndex 为基准，往左右两侧就近查找，完美保底处于中间安全区间。
             for (int i = 0; i < _data.Count; i++)
             {
-                if (_data[i] != value) continue;
-
-                double x = i * ItemWidth - _offset;
-                double itemCenter = x + ItemWidth / 2;
-
-                double dist = Math.Abs(itemCenter - center);
-
-                if (dist < minDist)
+                if (_data[i] == value)
                 {
-                    minDist = dist;
-                    bestIndex = i;
+                    int diff = Math.Abs(i - _centerIndex);
+                    if (diff < minIndexDiff)
+                    {
+                        minIndexDiff = diff;
+                        bestIndex = i;
+                    }
                 }
             }
 
             if (bestIndex == -1) return;
 
             _centerIndex = bestIndex;
-            _offset = bestIndex * ItemWidth - center + ItemWidth / 2;
 
-            UpdateLayout();
+            // 如果布局已就绪，立即更新视图
+            if (Width > 0)
+            {
+                double center = Width / 2;
+                _offset = _centerIndex * ItemWidth - center + ItemWidth / 2;
+                UpdateLayout();
+            }
         }
+
+
     }
 }

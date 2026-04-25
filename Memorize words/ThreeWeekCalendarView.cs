@@ -193,8 +193,8 @@ namespace Memorize_words.Controls
                 // 计算颜色
                 Color baseColor = Colors.White;
                 if (total == 2) baseColor = Color.FromRgb(204, 255, 153);
-                else if (total == 3) baseColor = Color.FromRgb(255, 255, 153);
-                else if (total >= 4) baseColor = Color.FromRgb(255, 153, 153);
+                else if ( total >2 && total <= 4) baseColor = Color.FromRgb(255, 255, 153);
+                else if (total > 4) baseColor = Color.FromRgb(255, 153, 153);
 
                 if (isPast) baseColor = BlendWithGray(baseColor);
 

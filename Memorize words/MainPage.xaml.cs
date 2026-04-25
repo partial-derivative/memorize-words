@@ -37,7 +37,7 @@ public partial class MainPage : ContentPage
     private EditMode _currentEditMode = EditMode.Write;
 
     // ==========================================
-
+    private bool IsDarkMode => Application.Current?.RequestedTheme == AppTheme.Dark;
 
     public MainPage()
     {
@@ -59,8 +59,37 @@ public partial class MainPage : ContentPage
         {
             calendar.ReloadWeekStart();   // 你需要新增这个方法
         });
+        MessagingCenter.Subscribe<App>(this, "DateChangedWhileBackgrounded", (sender) =>
+        {
+            RefreshForNewDay();
+        });
+        // ⭐ 核心2：订阅系统深色模式的实时切换事件
+        if (Application.Current != null)
+        {
+            Application.Current.RequestedThemeChanged += OnThemeChanged;
+        }
     }
 
+    // ⭐ 核心3：当用户在手机系统里切换深色模式时，立即刷新UI颜色
+    private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            UpdateWordTypeUI();
+            SetEditModeState(_currentEditMode);
+            UpdateCountdown();
+            UpdateStatusBarAppearance();
+        });
+    }
+    private void RefreshForNewDay()
+    {
+        calendar.ApplySettingsFromPreferences();            
+        detailView.Refresh();
+        UpdateCountdown();
+
+        string key = GetCurrentWordTypeInternalKey();
+        wheelPicker.ScrollToValue(calendar.GetNextValue(key));
+    }
     private void UpdateCountdown()
     {
         var saved = Preferences.Get("TargetDate", "");
@@ -76,17 +105,18 @@ public partial class MainPage : ContentPage
         if (days < 0)
         {
             LblCountdown.Text = "∅";
-            LblCountdown.TextColor = Colors.Red; // 红色
+            LblCountdown.TextColor = Colors.Red; // 保持红色
         }
         else if (days == 0)
         {
             LblCountdown.Text = "0";
-            LblCountdown.TextColor = Colors.Red; // 红色
+            LblCountdown.TextColor = Colors.Red; // 保持红色
         }
         else
         {
             LblCountdown.Text = $"{days}";
-            LblCountdown.TextColor = Colors.Black; // 黑色
+            // ⭐ 动态反色：深色模式白色，浅色模式黑色
+            LblCountdown.TextColor = IsDarkMode ? Colors.White : Colors.Black;
         }
     }
 
@@ -145,19 +175,21 @@ public partial class MainPage : ContentPage
 
     private void UpdateWordTypeUI()
     {
+        // ⭐ 背景统一设为透明，避免深色模式下出现白底
+        BtnWordType.BackgroundColor = Colors.Transparent;
+
         if (_currentWordMode == WordTypeMode.Type1)
         {
-            BtnWordType.Text = WordType1_DisplayText; // 显示解耦字符
-            BtnWordType.BackgroundColor = Colors.White;
-            BtnWordType.TextColor = Colors.Red;
+            BtnWordType.Text = WordType1_DisplayText;
+            BtnWordType.TextColor = Colors.Red; // 规定红色始终为红色
             BtnWordType.FontAttributes = FontAttributes.Bold;
             BtnWordType.FontSize = 28;
         }
         else
         {
-            BtnWordType.Text = WordType2_DisplayText; // 显示解耦字符
-            BtnWordType.BackgroundColor = Colors.White;
-            BtnWordType.TextColor = Colors.Blue;
+            BtnWordType.Text = WordType2_DisplayText;
+            // 纯蓝色在深色模式下极难看清，若深色模式自动换成浅蓝色(LightSkyBlue)，浅色保留纯蓝
+            BtnWordType.TextColor = IsDarkMode ? Colors.LightSkyBlue : Colors.Blue;
             BtnWordType.FontSize = 28;
             BtnWordType.FontAttributes = FontAttributes.None;
         }
@@ -184,12 +216,14 @@ public partial class MainPage : ContentPage
         if (mode == EditMode.Write)
         {
             BtnWriteDelete.Text = WriteMode_DisplayText;
-            BtnWriteDelete.BackgroundColor = Colors.White;
-            BtnWriteDelete.TextColor = Colors.Black;
+            // ⭐ 正常模式：背景透明，文字反转
+            BtnWriteDelete.BackgroundColor = Colors.Transparent;
+            BtnWriteDelete.TextColor = IsDarkMode ? Colors.White : Colors.Black;
         }
         else // Delete
         {
             BtnWriteDelete.Text = DeleteMode_DisplayText;
+            // ⭐ 删除模式：被指定为红色，始终保持红底白字
             BtnWriteDelete.BackgroundColor = Colors.Red;
             BtnWriteDelete.TextColor = Colors.White;
         }
@@ -219,14 +253,52 @@ public partial class MainPage : ContentPage
         wheelPicker.ScrollToValue(next);
     }
 
+
     protected override void OnAppearing()
     {
         base.OnAppearing();
         detailView?.Refresh();
         UpdateCountdown(); // ⭐ 每次返回页面都刷新
-        UpdateCountdown(); // 刷新倒计时
 
         // ⭐ 新增：每次从设置页返回主页时，强制日历读取新设置并重绘
         calendar.ApplySettingsFromPreferences();
+        string internalKey = GetCurrentWordTypeInternalKey();
+        int next = calendar.GetNextValue(internalKey);
+        wheelPicker.ScrollToValue(next);
+        // ⭐ 每次重新进入该页面时，也强制更新一次颜色，以防用户在后台设置里切换了主题
+        UpdateWordTypeUI();
+        SetEditModeState(_currentEditMode);
+        UpdateCountdown();
+        UpdateStatusBarAppearance();
     }
-}
+    // ==========================================
+    // ⭐ 核心新增：专门处理手机顶部状态栏颜色的方法
+    // ==========================================
+    private void UpdateStatusBarAppearance()
+    {
+        bool isDark = IsDarkMode;
+
+        // 1. 设置页面整体背景色（iOS 检测到背景色变化后，会自动将状态栏文字变为黑/白反色）
+        this.BackgroundColor = isDark ? Colors.Black : Colors.White;
+
+#if ANDROID
+        // 2. 针对 Android 平台，调用底层 API 强制修改顶部状态栏的文字和背景颜色
+        var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+        var window = activity?.Window;
+        if (window != null)
+        {
+            // 修改状态栏的背景色
+            window.SetStatusBarColor(isDark ? Android.Graphics.Color.Black : Android.Graphics.Color.White);
+            
+            // 修改状态栏文字和图标的颜色
+            var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(window, window.DecorView);
+            if (controller != null)
+            {
+                // AppearanceLightStatusBars = true 意味着“亮色状态栏” -> 会强制将电量/时间的文字和图标变为黑色
+                // 反之，false 时文字和图标为白色
+                controller.AppearanceLightStatusBars = !isDark;
+            }
+        }
+#endif
+    }
+    }
