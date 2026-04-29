@@ -48,6 +48,10 @@ namespace Memorize_words.Controls
 
         public ThreeWeekCalendarView()
         {
+            Application.Current.RequestedThemeChanged += (_, __) =>
+            {
+                Render();
+            };
             LoadData();
             _selectedDate = Today;
             var mode = Preferences.Get("WeekStart", "Monday");

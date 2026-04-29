@@ -36,9 +36,11 @@ namespace Memorize_words.Controls
         // ⭐ 2. 判断当前主题并输出对应的动态蓝色
         private bool IsDarkMode => Application.Current?.RequestedTheme == AppTheme.Dark;
         private Color DynamicBlue => IsDarkMode ? Colors.LightSkyBlue : Colors.Blue;
+        private Border _centerBorder;
 
         public WheelPickerView()
         {
+            Application.Current.RequestedThemeChanged += OnThemeChanged;
             // ⭐ 核心黑科技：透明度为 1/255 的背景色。
             // 肉眼绝对看不见，但能强制 Android 和 iOS 生成触控拦截面，防止手势穿透掉。
             this.BackgroundColor = Color.FromRgba(255, 255, 255, 0.01);
@@ -46,6 +48,7 @@ namespace Memorize_words.Controls
             BuildUI();
             InitGesture();
             ResetToCenter();
+
         }
 
         private void InitData()
@@ -82,26 +85,39 @@ namespace Memorize_words.Controls
                 _root.Children.Add(lbl);
             }
 
-            // 中心框
-            var border = new Border
+            //// 中心框
+            //var border = new Border
+            //{
+            //    Stroke = DynamicBlue,
+            //    StrokeThickness = 2,
+            //    WidthRequest = ItemWidth,
+            //    HeightRequest = 70,
+            //    StrokeShape = new RoundRectangle { CornerRadius = 8 },
+            //    // ⭐ 修复3：框也要穿透
+            //    InputTransparent = true
+            //};
+            _centerBorder = new Border
             {
                 Stroke = DynamicBlue,
                 StrokeThickness = 2,
                 WidthRequest = ItemWidth,
                 HeightRequest = 70,
                 StrokeShape = new RoundRectangle { CornerRadius = 8 },
-                // ⭐ 修复3：框也要穿透
                 InputTransparent = true
             };
 
-            AbsoluteLayout.SetLayoutFlags(border, AbsoluteLayoutFlags.PositionProportional);
-            AbsoluteLayout.SetLayoutBounds(border, new Rect(0.5, 0.5, ItemWidth, 70));
+            AbsoluteLayout.SetLayoutFlags(_centerBorder, AbsoluteLayoutFlags.PositionProportional);
+            AbsoluteLayout.SetLayoutBounds(_centerBorder, new Rect(0.5, 0.5, ItemWidth, 70));
 
-            _root.Children.Add(border);
+            _root.Children.Add(_centerBorder);
 
             Content = _root;
         }
 
+        private void OnThemeChanged(object? sender, AppThemeChangedEventArgs e)
+        {
+            _centerBorder.Stroke = DynamicBlue;
+        }
         // 2. 修改手势绑定，把手势直接绑在 _root 上，而不是 ContentView 本身
         private void InitGesture()
         {
