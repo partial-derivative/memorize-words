@@ -12,13 +12,14 @@ namespace Memorize_words.Controls
     {
         public Color FutureTextColor { get; set; } = Colors.Black;
         public Color PastTextColor { get; set; } = Colors.Gray;
-        public Color TodayBorderColor { get; set; } = Colors.Blue;
+        //public Color TodayBorderColor { get; set; } = Colors.Blue;
+        public Color TodayBorderColor =>IsDarkMode ? Colors.LightSkyBlue : Colors.Blue;
 
         private Grid _grid;
         private Label[] _headerLabels = new Label[7]; // 缓存表头
         private CellUI[] _cells = new CellUI[21];     // 缓存 21 个日历格子（核心优化）
 
-        private readonly DateTime _today = DateTime.Today;
+        private DateTime Today => DateTime.Today;
         private DateTime _selectedDate;
         public bool IsDeleteMode { get; set; }
         public event Action<DateTime>? DateSelected;
@@ -32,6 +33,9 @@ namespace Memorize_words.Controls
         public DateTime SelectedDate => _selectedDate;
 
         public enum WeekStartMode { Monday, Sunday }
+        // ⭐ 2. 判断当前主题并输出对应的动态蓝色
+        private bool IsDarkMode => Application.Current?.RequestedTheme == AppTheme.Dark;
+        private Color DynamicBlue => IsDarkMode ? Colors.LightSkyBlue : Colors.Blue;
 
         // ================= 内部缓存结构 =================
         private class CellUI
@@ -45,7 +49,7 @@ namespace Memorize_words.Controls
         public ThreeWeekCalendarView()
         {
             LoadData();
-            _selectedDate = _today;
+            _selectedDate = Today;
             var mode = Preferences.Get("WeekStart", "Monday");
             WeekStart = mode == "Sunday" ? WeekStartMode.Sunday : WeekStartMode.Monday;
 
@@ -174,14 +178,14 @@ namespace Memorize_words.Controls
             }
 
             // 2. 更新 21 个格子的内容
-            var start = GetWeekStart(_today).AddDays(-7);
+            var start = GetWeekStart(Today).AddDays(-7);
 
             for (int i = 0; i < 21; i++)
             {
                 var cell = _cells[i];
                 var date = start.AddDays(i);
 
-                bool isPast = date.Date < _today;
+                bool isPast = date.Date < Today;
                 bool isSelected = date.Date == _selectedDate.Date;
 
                 // 取数据

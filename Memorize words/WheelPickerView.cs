@@ -33,6 +33,10 @@ namespace Memorize_words.Controls
         public event Action<int>? OnValueClicked;
         public event Action<int>? OnValueConfirmed;
 
+        // ⭐ 2. 判断当前主题并输出对应的动态蓝色
+        private bool IsDarkMode => Application.Current?.RequestedTheme == AppTheme.Dark;
+        private Color DynamicBlue => IsDarkMode ? Colors.LightSkyBlue : Colors.Blue;
+
         public WheelPickerView()
         {
             // ⭐ 核心黑科技：透明度为 1/255 的背景色。
@@ -81,7 +85,7 @@ namespace Memorize_words.Controls
             // 中心框
             var border = new Border
             {
-                Stroke = Colors.Blue,
+                Stroke = DynamicBlue,
                 StrokeThickness = 2,
                 WidthRequest = ItemWidth,
                 HeightRequest = 70,
