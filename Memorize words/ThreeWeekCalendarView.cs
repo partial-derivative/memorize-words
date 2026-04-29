@@ -303,15 +303,47 @@ namespace Memorize_words.Controls
             DataChanged?.Invoke();
         }
 
+
         public int GetNextValue(string state)
         {
             var dict = state == "Ⅰ" ? _type1Data : _type2Data;
-            if (dict.TryGetValue(_selectedDate.Date, out var list) && list.Count > 0)
+
+            DateTime maxBaseDate = DateTime.MinValue;
+
+            // 1. 遍历所有数据，找出全局最大的 BaseDate（即最近一次创建日程的基准日期）
+            foreach (var kvp in dict)
             {
-                int last = list[list.Count - 1].Value;
-                return (last + 1) % 8;
+                foreach (var item in kvp.Value)
+                {
+                    if (item.BaseDate > maxBaseDate)
+                    {
+                        maxBaseDate = item.BaseDate;
+                    }
+                }
             }
-            return 0;
+
+            if (maxBaseDate != DateTime.MinValue)
+            {
+                // 2. 找到该最大 BaseDate 下，最后添加的那个记录
+                if (dict.TryGetValue(maxBaseDate, out var list))
+                {
+                    // list 维持了插入顺序，所以最后一个符合 BaseDate 的项就是最新创建的
+                    var lastItem = list.LastOrDefault(x => x.BaseDate == maxBaseDate);
+                    if (lastItem != null)
+                    {
+                        return (lastItem.Value + 1) % 8; // 保证 7 之后是 0
+                    }
+                }
+
+                // 兜底逻辑（通常不会走到这里）
+                var allItems = dict.Values.SelectMany(x => x).Where(x => x.BaseDate == maxBaseDate).ToList();
+                if (allItems.Any())
+                {
+                    return (allItems.Last().Value + 1) % 8;
+                }
+            }
+
+            return 0; // 如果没有任何日程，默认从 0 开始
         }
 
         void SaveData()
@@ -371,15 +403,62 @@ namespace Memorize_words.Controls
         public void DeleteGroup(CalendarItem target, string state)
         {
             var dict = state == "Ⅰ" ? _type1Data : _type2Data;
-            foreach (var kv in dict)
+
+            // 1. 安全获取当前点击 item 的偏移天数
+            int targetOffset = 0;
+            if (target.Index >= 0 && target.Index < _offsets.Length)
             {
-                kv.Value.RemoveAll(x => x.BaseDate == target.BaseDate && x.Value == target.Value);
+                targetOffset = _offsets[target.Index];
             }
+
+            // 2. 找到被点击的 item 实际所显示的日期
+            DateTime targetDate = target.BaseDate.AddDays(targetOffset);
+
+            // 3. 确定它在同 BaseDate 且同 Value 的重复记录中排第几个（精准定位，避免多点重复创建时误删）
+            int occurrenceIndex = 0;
+            if (dict.TryGetValue(targetDate, out var list))
+            {
+                int matchCount = 0;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i] == target) // 内存引用严格相同，定位到了点击的具体对象
+                    {
+                        occurrenceIndex = matchCount;
+                        break;
+                    }
+                    if (list[i].BaseDate == target.BaseDate && list[i].Value == target.Value)
+                    {
+                        matchCount++;
+                    }
+                }
+            }
+
+            // 4. 遍历该日程关联的所有偏移量（0, 1, 3, 7天），精准删除对应顺序的那唯一一个记录
+            foreach (var offset in _offsets)
+            {
+                DateTime date = target.BaseDate.AddDays(offset);
+                if (dict.TryGetValue(date, out var dateList))
+                {
+                    int matchCount = 0;
+                    for (int i = 0; i < dateList.Count; i++)
+                    {
+                        if (dateList[i].BaseDate == target.BaseDate && dateList[i].Value == target.Value)
+                        {
+                            if (matchCount == occurrenceIndex)
+                            {
+                                dateList.RemoveAt(i);
+                                break;
+                            }
+                            matchCount++;
+                        }
+                    }
+                }
+            }
+
             Render();
             SaveData();
             DataChanged?.Invoke();
         }
-
         public List<CalendarItem> GetItems(DateTime date, string state)
         {
             var dict = state == "Ⅰ" ? _type1Data : _type2Data;

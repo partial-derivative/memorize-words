@@ -210,74 +210,10 @@ namespace Memorize_words.Controls
             UpdateLayout();
         }
 
-        //private void ResetToCenter()
-        //{
-        //    _centerIndex = _data.Count / 2;
-        //    _offset = _centerIndex * ItemWidth;
 
-        //    SizeChanged += (_, __) =>
-        //    {
-        //        double center = Width / 2;
-        //        _offset = _centerIndex * ItemWidth - center + ItemWidth / 2;
-        //        UpdateLayout();
-        //    };
-        //}
         private bool _initialized = false;
 
-        //private void ResetToCenter()
-        //{
-        //    _centerIndex = _data.Count / 2;
 
-        //    SizeChanged += async (_, __) =>
-        //    {
-        //        if (_initialized || Width <= 0)
-        //            return;
-
-        //        _initialized = true;
-
-        //        await Task.Yield(); // 等待本轮布局完全结束
-
-        //        double center = Width / 2;
-
-        //        _offset = _centerIndex * ItemWidth - center + ItemWidth / 2;
-
-        //        UpdateLayout();
-
-        //        SnapToNearest();   // ⭐ 强制最终吸附校正
-        //    };
-        //}
-
-
-        //public void ScrollToValue(int value)
-        //{
-        //    double center = Width / 2;
-
-        //    int bestIndex = -1;
-        //    double minDist = double.MaxValue;
-
-        //    for (int i = 0; i < _data.Count; i++)
-        //    {
-        //        if (_data[i] != value) continue;
-
-        //        double x = i * ItemWidth - _offset;
-        //        double itemCenter = x + ItemWidth / 2;
-
-        //        double dist = Math.Abs(itemCenter - center);
-
-        //        if (dist < minDist)
-        //        {
-        //            minDist = dist;
-        //            bestIndex = i;
-        //        }
-        //    }
-
-        //    if (bestIndex == -1) return;
-
-        //    _centerIndex = bestIndex;
-        //    _offset = bestIndex * ItemWidth - center + ItemWidth / 2;
-
-        //    UpdateLayout();
-        //}
         private void ResetToCenter()
         {
             // 默认中心点落在数组的正中间，比如 800个元素的第 400 个（保证左右都有充足的数据可滚）

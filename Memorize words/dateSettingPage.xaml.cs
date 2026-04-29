@@ -13,6 +13,14 @@ public partial class dateSettingsPage : ContentPage
         {
             TargetDatePicker.Date = dt;
         }
+        else
+        {
+            // 首次启动默认过去日期（示例：1天前）
+            var defaultDate = DateTime.Today.AddDays(-1);
+
+            TargetDatePicker.Date = defaultDate;
+            Preferences.Set("TargetDate", defaultDate.ToString("yyyy-MM-dd"));
+        }
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
